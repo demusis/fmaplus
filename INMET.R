@@ -1,5 +1,6 @@
 library(readr)
 library(lubridate)
+library(openxlsx)
 
 # Carga de dados
 inmet <- read_delim("inmet Campo Verde_A912_2019.csv", 
@@ -82,28 +83,14 @@ for (i in 1:nrow(inmetMesc)) {
   }
 }
 
-inmetMesc$GP <- NA
+# Cria um objeto workbook
+workbook <- createWorkbook()
 
-# Grau de perigo
-gp <- function(FMA) {
-  print(FMA)
-  if (FMA <= 3) {
-    return('Nulo')
-  } else {
-    if (FMA <= 8) {
-      return('Pequeno')
-    } else {
-      if (FMA <= 14) {
-        return('Médio')
-      } else {
-        if (FMA <= 24) {
-          return('Alto')
-        } else {
-          return('Muito alto')
-        }
-      }
-    }
-  }
-}
+# Adiciona uma nova planilha ao workbook
+addWorksheet(workbook, "FMA+")
 
+# Escreve o dataframe na planilha
+writeData(workbook, "FMA+", inmetMesc)
 
+# Salva o arquivo
+saveWorkbook(workbook, "Resultados.xlsx", overwrite = TRUE)
